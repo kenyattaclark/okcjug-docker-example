@@ -1,4 +1,4 @@
-package com.box20six.docker.models;
+package com.box20six.docker.model;
 
 import lombok.Data;
 
