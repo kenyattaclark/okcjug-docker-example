@@ -7,6 +7,7 @@ import com.box20six.docker.repository.search.RegistrationSearchRepository;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.dozer.DozerBeanMapper;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,13 @@ public class RegistrationController {
             @ApiImplicitParam(name="sort", value = "Sort order, e.g. ?sort=firstName or ?sort=lastName,desc", dataType = "string", paramType = "query", allowMultiple = true)
     })
     public List<Registration> list(@RequestParam(value = "q", required = false) String query, @ApiIgnore Pageable pageable) {
-        Page<RegistrationDocument> page = searchRepository.search(QueryBuilders.queryString(query), pageable);
+        Page<RegistrationDocument> page;
+
+        if (StringUtils.isNotBlank(query)) {
+            page = searchRepository.search(QueryBuilders.queryString(query), pageable);
+        } else {
+            page = repository.findAll(pageable);
+        }
 
         List registrations = page.getContent().stream()
                 .map(document -> mapper.map(document, Registration.class))

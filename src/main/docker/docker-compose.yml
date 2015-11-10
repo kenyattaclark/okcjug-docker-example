@@ -1,0 +1,16 @@
+registration:
+  build: .
+  ports:
+    - "8080:8080"
+  links:
+    - elasticsearch
+    - mongo
+  environment:
+    SPRING_DATA_MONGODB_URI: mongodb://mongo/profile-db
+    SPRING_DATA_ELASTICSEARCH_CLUSTER-NODES: "elasticsearch:9300"
+mongo:
+  image: mongo:3.0.4
+  command: --smallfiles --rest
+elasticsearch:
+  image: elasticsearch:1.5.2
+  command: elasticsearch -Des.network.host=0.0.0.0
